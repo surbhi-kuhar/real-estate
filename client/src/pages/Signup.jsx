@@ -38,9 +38,9 @@ function Signup() {
         return;
       }
       setLoading(false);
-      setError(null); //not working
+      setError(null); 
       console.log("inside sign In");
-      navigate("/sign-in"); //not working
+      navigate("/sign-in"); 
     } catch (error) {
       console.log("inside err");
       setLoading(false);
