@@ -12,6 +12,11 @@ export const signup = async (req, res, next) => {
       email,
       password: hashedPassword,
     });
+    return res.status(200).json({
+      user: User,
+      message: "user created",
+      success: true,
+    });
   } catch (err) {
     next(err);
   }
