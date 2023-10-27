@@ -11,6 +11,9 @@ import {
   updateStart,
   updateSuccess,
   updateFailure,
+  deleteStart,
+  deleteFailure,
+  deleteSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { app } from "../firebase";
@@ -22,7 +25,7 @@ function Profile() {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setfileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  const [updateUserSuccess,setupdateUserSuccess] = useState(false);
+  const [updateUserSuccess, setupdateUserSuccess] = useState(false);
   const dispatch = useDispatch();
   console.log(file);
   console.log(filePerc);
@@ -87,6 +90,24 @@ function Profile() {
     }
   };
 
+  const handleDelete = async() => {
+    try {
+      dispatch(deleteStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteFailure(data.message));
+        return;
+      }
+      dispatch(deleteSuccess(data));
+    } catch (err) {
+      dispatch(deleteFailure(err.message));
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7 ">Profile</h1>
@@ -145,11 +166,15 @@ function Profile() {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleDelete}>
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
-      <p className="text-red-700 mt-5">{error ? error:""}</p>
-      <p className="text-green-700 mt-5">{updateUserSuccess ? "User is updated successfully":""}</p>
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <p className="text-green-700 mt-5">
+        {updateUserSuccess ? "User is updated successfully" : ""}
+      </p>
     </div>
   );
 }
