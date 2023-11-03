@@ -30,6 +30,8 @@ function Profile() {
   const [fileUploadError, setfileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateUserSuccess, setupdateUserSuccess] = useState(false);
+  const [showListingsError, setshowListingsError] = useState(false);
+  const [listings, setListings] = useState([]);
   const dispatch = useDispatch();
   console.log(file);
   console.log(filePerc);
@@ -127,6 +129,21 @@ function Profile() {
     }
   };
 
+  const handleUserListing = async () => {
+    try {
+      setshowListingsError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setshowListingsError(true);
+        return;
+      }
+      setListings(data);
+    } catch (error) {
+      setshowListingsError(true);
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7 ">Profile</h1>
@@ -186,7 +203,9 @@ function Profile() {
         <Link
           to={"/create-listing"}
           className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
-        >Create Listing</Link>
+        >
+          Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span className="text-red-700 cursor-pointer" onClick={handleDelete}>
@@ -200,6 +219,44 @@ function Profile() {
       <p className="text-green-700 mt-5">
         {updateUserSuccess ? "User is updated successfully" : ""}
       </p>
+      <button onClick={handleUserListing} className="text-green-700 w-full">
+        Show listings
+      </button>
+      <p className="text-red-700">
+        {showListingsError ? "Error showing listings" : ""}
+      </p>
+
+      {listings && listings.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          <h1 className="text-center mt-7 text-2xl font-semibold">Your listings</h1>
+          {listings.map((item) => (
+            <div
+              key={item._id}
+              className="border rounded-lg p-3 flex justify-between items-center gap-4 "
+            >
+              <Link to={`/listing/${item._id}`}>
+                <img
+                  src={item.imageURLs[0]}
+                  className="h-16 w-16 object-contain"
+                  alt="listing-cover"
+                />
+              </Link>
+              <Link
+                to={`/listing/${item._id}`}
+                className="text-slate-700 font-semibold flex-1 hover:underline truncate"
+              >
+                <p>{item.name}</p>
+              </Link>
+              <div className="flex flex-col items-center">
+                <button className="text-red-700">Delete</button>
+                <button className="text-green-700">Edit</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
