@@ -144,6 +144,24 @@ function Profile() {
     }
   };
 
+  const handleDeleteListing = async (id) => {
+    try {
+      const res = await fetch(`/api/listing/delete/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        return;
+      }
+
+      setListings((prev) => prev.filter((listing) => listing._id !== id));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7 ">Profile</h1>
@@ -228,7 +246,9 @@ function Profile() {
 
       {listings && listings.length > 0 ? (
         <div className="flex flex-col gap-4">
-          <h1 className="text-center mt-7 text-2xl font-semibold">Your listings</h1>
+          <h1 className="text-center mt-7 text-2xl font-semibold">
+            Your listings
+          </h1>
           {listings.map((item) => (
             <div
               key={item._id}
@@ -248,7 +268,12 @@ function Profile() {
                 <p>{item.name}</p>
               </Link>
               <div className="flex flex-col items-center">
-                <button className="text-red-700">Delete</button>
+                <button
+                  className="text-red-700"
+                  onClick={() => handleDeleteListing(item._id)}
+                >
+                  Delete
+                </button>
                 <button className="text-green-700">Edit</button>
               </div>
             </div>
