@@ -17,13 +17,11 @@ function Header() {
     navigate(`/search?${searchQuery}`);
   };
 
-  useEffect
-    (() => {
-      const urlParams = new URLSearchParams(location.search);
-      const searchTermFromUrl = urlParams.get("searchTerm");
-      if (searchTermFromUrl) setsearchTerm(searchTermFromUrl);
-    },
-    [location.search]);
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    if (searchTermFromUrl) setsearchTerm(searchTermFromUrl);
+  }, [location.search]);
 
   return (
     <header className="bg-slate-200 shadow-md">
